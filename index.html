@@ -1,0 +1,115 @@
+<html>
+
+<head>
+    <title>Firebase VanillaJS</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="title">Contact Form</h1>
+        <div class="wrapper animated bounceInLeft">
+            <div class="contact">
+                <h3 class="contact-us">Contact Us</h3>
+                <div class="alert">Your message has been sent!</div>
+                <form id="contactForm">
+                    <p class="name-field">
+                        <label>Name <span>*</span></label>
+                        <input type="text" name="name" id="name" required>
+                    </p>
+                    <p class="email-field">
+                        <label>Email <span>*</span></label>
+                        <input type="email" name="email" id="email" required>
+                    </p>
+                    <p class="phone-field">
+                        <label>Phone</label>
+                        <input type="text" name="phone" id="phone">
+                    </p>
+                    <p class="message-field full">
+                        <label>Message</label>
+                        <textarea name="message" rows="5" id="message"></textarea>
+                    </p>
+                    <p class="required-field">Required field <span>*</span></p>
+                    <p class="submit-button">
+                        <button type="submit">Submit</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+<!-- Insert this script at the bottom of the HTML, but before you use any Firebase services -->
+<script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-firestore.js"></script>
+<script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD7xhPcM3wRRyRYeiVJsDcbNKh74QrVn_s",
+        authDomain: "fiddle-project-42f40.firebaseapp.com",
+        projectId: "fiddle-project-42f40",
+        storageBucket: "fiddle-project-42f40.appspot.com",
+        messagingSenderId: "756556385165",
+        appId: "1:756556385165:web:53630e333ea7b568024bc4"
+    };
+    //! Smaz :if false v Cloud Firestore>Rules line 5
+    // Initialize Firebase & db
+    const firebaseApp = firebase.initializeApp(firebaseConfig);
+    const db = firebaseApp.firestore();
+</script>
+<script>
+    // Reference messages collection
+    var messagesRef = db.collection('queries');
+
+    // Listen for form submit
+    document.getElementById('contactForm').addEventListener('submit', submitForm);
+
+    // Submit form
+    function submitForm(e) {
+        e.preventDefault();
+
+        //Get value
+        var name = getInputVal('name');
+        var email = getInputVal('email');
+        var phone = getInputVal('phone');
+        var message = getInputVal('message');
+
+        // Save message
+        saveMessage(name, email, phone, message);
+
+        // Show alert
+        document.querySelector('.alert').style.display = 'block';
+
+        // Hide alert after 3 seconds
+        setTimeout(function () {
+            document.querySelector('.alert').style.display = 'none';
+        }, 3000);
+
+        // Clear form
+        document.getElementById('contactForm').reset();
+    }
+
+    // Function to get form value
+    function getInputVal(id) {
+        return document.getElementById(id).value;
+    }
+
+    // Save message to firebase
+    function saveMessage(name, email, phone, message) {
+        messagesRef.add({
+            name: name,
+            email: email,
+            phone: phone,
+            message: message
+        }).then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        }).catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
+    }
+
+</script>
+
+</html>
